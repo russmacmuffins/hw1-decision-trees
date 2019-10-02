@@ -60,6 +60,9 @@ def train_test_split(features, targets, fraction):
     
     Returns train_features (size NxK), train_targets (Nx1), test_features (size MxK 
     where M is the remaining points in data), and test_targets (Mx1).
+    
+    Special case: When fraction is 1.0. Training and test splits should be exactly the same. 
+    (i.e. Return the entire feature and target arrays for both train and test splits)
 
     Args:
         features (np.array): numpy array containing features for each example
