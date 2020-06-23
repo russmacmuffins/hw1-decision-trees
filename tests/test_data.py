@@ -4,7 +4,7 @@ import csv
 from .test_utils import write_random_csv_file
 
 def test_load_data():
-    from code import load_data
+    from src import load_data
 
     n_features = np.random.randint(5, 20)
     n_samples = np.random.randint(50, 150)
@@ -15,7 +15,7 @@ def test_load_data():
     assert np.allclose(features, _features) and np.allclose(targets, _targets)
 
 def test_train_test_split():
-    from code import train_test_split
+    from src import train_test_split
 
     n_features = np.random.randint(5, 20)
     n_samples = np.random.randint(50, 150)

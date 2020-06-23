@@ -1,5 +1,5 @@
 import numpy as np
-from code import run
+from src import run
 import os
 
 datasets = [
