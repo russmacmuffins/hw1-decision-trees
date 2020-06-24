@@ -72,7 +72,7 @@ def train_test_split(features, targets, fraction):
     Returns
         train_features: subset of features containing N examples to be used for training.
         train_targets: subset of targets corresponding to train_features containing targets.
-        test_features: subset of features containing N examples to be used for testing.
+        test_features: subset of features containing M examples to be used for testing.
         test_targets: subset of targets corresponding to test_features containing targets.
     """
     if (fraction > 1.0):
