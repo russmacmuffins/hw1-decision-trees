@@ -20,6 +20,9 @@ class PriorProbability():
                 number of examples and F is number of features.
             targets (np.array): numpy array containing class labels for each of the N 
                 examples.
+        Output:
+            VOID: You should be updating self.most_common_class with the most common class
+            found from the prior probability.
         """
 
         raise NotImplementedError()
@@ -32,6 +35,9 @@ class PriorProbability():
         Args:
             features (np.array): numpy array of size NxF containing features, where N is
                 number of examples and F is number of features.
+        Outputs:
+            predictions (np.array): numpy array of size N array which has the predicitons 
+            for the input data.
         """
 
         

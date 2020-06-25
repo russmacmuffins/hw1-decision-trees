@@ -1,6 +1,6 @@
 import numpy as np
 
-class Tree():
+class Node():
     def __init__(self, value=None, attribute_name="root", attribute_index=None, branches=None):
         """
         This class implements a tree structure with multiple branches at each node.
@@ -50,7 +50,7 @@ class DecisionTree():
         Args:
             attribute_names (list): list of strings containing the attribute names for
                 each feature (e.g. chocolatey, good_grades, etc.)
-
+        
         """
         self.attribute_names = attribute_names
         self.tree = None
@@ -70,6 +70,8 @@ class DecisionTree():
                 number of examples and F is number of features.
             targets (np.array): numpy array containing class labels for each of the N
                 examples.
+        Output:
+            VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
 
@@ -84,6 +86,9 @@ class DecisionTree():
         Args:
             features (np.array): numpy array of size NxF containing features, where N is
                 number of examples and F is number of features.
+        Outputs:
+            predictions (np.array): numpy array of size N array which has the predicitons 
+            for the input data.
         """
         self._check_input(features)
 

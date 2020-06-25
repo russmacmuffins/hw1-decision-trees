@@ -43,7 +43,7 @@ def load_data(data_path):
 
     Output:
         features (np.array): numpy array of size NxK containing the K features
-        targets (np.array): numpy array of size Nx1 containing the 1 feature.
+        targets (np.array): numpy array of size 1xN containing the N targets.
         attribute_names (list): list of strings containing names of each attribute 
             (headers of csv)
     """
