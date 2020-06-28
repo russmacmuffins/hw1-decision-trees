@@ -14,6 +14,20 @@ def xp_dataset_name(key):
         raise ValueError('Dataset ' + key + ' cannot be found')
     return dataset[0]
 
+
+def test_information_gain():
+    from code import load_data
+    from code import information_gain
+
+    _features, _targets, _attribute_names = load_data('data/PlayTennis.csv')
+    iGHumidity = information_gain(_features, 2, _targets)
+    iGWind = information_gain(_features, 3, _targets)
+    realIGHumidity = 0.1515
+    realIGWind = 0.048
+
+    assert iGHumidity-realIGHumidity < 1e-3
+    assert iGWind - realIGWind < 1e-3
+
 def test_experiment_run_decision_tree():
     accuracies = {}
     for data_path in datasets:
