@@ -25,8 +25,8 @@ def test_information_gain():
     realIGHumidity = 0.1515
     realIGWind = 0.048
 
-    assert iGHumidity-realIGHumidity < 1e-3
-    assert iGWind - realIGWind < 1e-3
+    assert np.abs(iGHumidity-realIGHumidity)< 1e-3
+    assert np.abs(iGWind - realIGWind) < 1e-3
 
 def test_experiment_run_decision_tree():
     accuracies = {}
