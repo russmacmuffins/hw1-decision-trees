@@ -16,8 +16,8 @@ def xp_dataset_name(key):
 
 
 def test_information_gain():
-    from code import load_data
-    from code import information_gain
+    from src import load_data
+    from src import information_gain
 
     _features, _targets, _attribute_names = load_data('data/PlayTennis.csv')
     iGHumidity = information_gain(_features, 2, _targets)
