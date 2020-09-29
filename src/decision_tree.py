@@ -10,7 +10,7 @@ class Node():
         The defaults for this are for a root node in the tree.
 
         Arguments:
-            branches (list): List of Tree classes. Used to traverse the tree. In a
+            branches (list): List of Node classes. Used to traverse the tree. In a
                 binary decision tree, the length of this list is either 2 (for left and
                 right branches) or 0 (at a leaf node).
             attribute_name (str): Contains name of attribute that the tree splits the data
@@ -45,7 +45,7 @@ class DecisionTree():
 
         Here, you will implement a binary decision tree that uses the ID3 algorithm.
         Your decision tree will be contained in `self.tree`, which consists of
-        nested Tree classes (see above).
+        nested Node classes (see above).
 
         Args:
             attribute_names (list): list of strings containing the attribute names for
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     while len(attribute_names) > 0:
         attribute_name = attribute_names[0]
         if not decision_tree.tree:
-            decision_tree.tree = Tree(
+            decision_tree.tree = Node(
                 attribute_name=attribute_name,
                 attribute_index=decision_tree.attribute_names.index(attribute_name),
                 value=0,
@@ -193,7 +193,7 @@ if __name__ == '__main__':
             )
         else:
             decision_tree.tree.branches.append(
-                Tree(
+                Node(
                     attribute_name=attribute_name,
                     attribute_index=decision_tree.attribute_names.index(attribute_name),
                     value=0,
