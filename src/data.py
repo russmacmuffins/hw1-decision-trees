@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 import os
 import csv
 
@@ -10,12 +10,12 @@ def load_data(data_path):
 
     This function loads the data in data_path csv into two numpy arrays:
     features (of size NxK) and targets (of size Nx1) where N is the number of rows
-    and K is the number of features. 
-    
-    data_path leads to a csv comma-delimited file with each row corresponding to a 
-    different example. Each row contains binary features for each example 
+    and K is the number of features.
+
+    data_path leads to a csv comma-delimited file with each row corresponding to a
+    different example. Each row contains binary features for each example
     (e.g. chocolate, fruity, caramel, etc.) The last column indicates the label for the
-    example how likely it is to win a head-to-head matchup with another candy 
+    example how likely it is to win a head-to-head matchup with another candy
     bar.
 
     This function reads in the csv file, and reads each row into two numpy arrays.
@@ -24,8 +24,8 @@ def load_data(data_path):
 
     chocolate,fruity,caramel,peanutyalmondy,nougat,crispedricewafer,hard,bar,pluribus
 
-    The second array contains the targets for each row. The targets are in the last 
-    column of the csv file (labeled 'class'). The first row of the csv file contains 
+    The second array contains the targets for each row. The targets are in the last
+    column of the csv file (labeled 'class'). The first row of the csv file contains
     the labels for each column and shouldn't be read into an array.
 
     Example:
@@ -44,24 +44,51 @@ def load_data(data_path):
     Output:
         features (np.array): numpy array of size NxK containing the K features
         targets (np.array): numpy array of size 1xN containing the N targets.
-        attribute_names (list): list of strings containing names of each attribute 
+        attribute_names (list): list of strings containing names of each attribute
             (headers of csv)
     """
+    f = open(data_path)
+    read_file = csv.reader(f)
+    attribute_names = read_file[0]
+    attribute_num = len(attribute_names)
+    features = np.array()
+    targets = np.array()
+
+    for g in range(0, attribute_num - 2):
+        for h in features:
+            h[g] = 0
+        targets[g] = 0
+
+    for i in read_file:
+        if i != 0:
+            for j in range(0, attribute_num - 2):
+                if attribute_names[j] in i:
+                    features[j] = 1
+
+    counter = 0
+    for k in read_file:
+        if k[attribute_num - 1] == "class":
+            targets[counter] = 1
+        counter++
+
+
+
+
 
     # Implement this function and remove the line that raises the error after.
     raise NotImplementedError()
 
 def train_test_split(features, targets, fraction):
     """
-    Split features and targets into training and testing, randomly. N points from the data 
+    Split features and targets into training and testing, randomly. N points from the data
     sampled for training and (features.shape[0] - N) points for testing. Where N:
 
         N = int(features.shape[0] * fraction)
-    
-    Returns train_features (size NxK), train_targets (Nx1), test_features (size MxK 
+
+    Returns train_features (size NxK), train_targets (Nx1), test_features (size MxK
     where M is the remaining points in data), and test_targets (Mx1).
-    
-    Special case: When fraction is 1.0. Training and test splits should be exactly the same. 
+
+    Special case: When fraction is 1.0. Training and test splits should be exactly the same.
     (i.e. Return the entire feature and target arrays for both train and test splits)
 
     Args:
