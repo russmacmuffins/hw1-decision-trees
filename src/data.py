@@ -47,36 +47,22 @@ def load_data(data_path):
         attribute_names (list): list of strings containing names of each attribute
             (headers of csv)
     """
-    f = open(data_path)
+    f = open(data_path, 'rb')
     read_file = csv.reader(f)
     attribute_names = read_file[0]
     attribute_num = len(attribute_names)
     features = np.array()
     targets = np.array()
 
-    for g in range(0, attribute_num - 2):
-        for h in features:
-            h[g] = 0
-        targets[g] = 0
-
     for i in read_file:
         if i != 0:
-            for j in range(0, attribute_num - 2):
-                if attribute_names[j] in i:
-                    features[j] = 1
+            features.append(i)
 
-    counter = 0
+
     for k in read_file:
-        if k[attribute_num - 1] == "class":
-            targets[counter] = 1
-        counter++
+        targets.append(int(k[attribute_num - 1])）
 
 
-
-
-
-    # Implement this function and remove the line that raises the error after.
-    raise NotImplementedError()
 
 def train_test_split(features, targets, fraction):
     """
