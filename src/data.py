@@ -49,17 +49,16 @@ def load_data(data_path):
     """
     f = open(data_path)
     read_file = csv.reader(f)
-    attribute_names = read_file[0]
+    attribute_names = read_file.__next__()
     attribute_num = len(attribute_names)
     features = np.array()
     targets = np.array()
 
     for i in read_file:
-        if i != 0:
-            features.append(i)
+        features.append(i)
 
     for k in read_file:
-        targets.append(int(k[attribute_num - 1])）
+        targets.append(int(k[attribute_num - 1]))
 
     return features, targets, attribute_name
 
