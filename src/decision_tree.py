@@ -25,6 +25,7 @@ class Node():
         self.attribute_index = attribute_index
         self.value = value
 
+
 class DecisionTree():
     def __init__(self, attribute_names):
         """
@@ -50,10 +51,12 @@ class DecisionTree():
         Args:
             attribute_names (list): list of strings containing the attribute names for
                 each feature (e.g. chocolatey, good_grades, etc.)
-        
+
         """
         self.attribute_names = attribute_names
         self.tree = None
+        attribute_remains = attribute_names
+        if
 
     def _check_input(self, features):
         if features.shape[1] != len(self.attribute_names):
@@ -74,9 +77,15 @@ class DecisionTree():
             VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
+        num = 0
+        for i in targets:
+            if i:
+                num++
 
-
-        raise NotImplementedError()
+        if num >= len(targets):
+            self.most_common_class = 1
+        else:
+            self.most_common_class = 0
 
     def predict(self, features):
         """
@@ -87,7 +96,7 @@ class DecisionTree():
             features (np.array): numpy array of size NxF containing features, where N is
                 number of examples and F is number of features.
         Outputs:
-            predictions (np.array): numpy array of size N array which has the predicitons 
+            predictions (np.array): numpy array of size N array which has the predicitons
             for the input data.
         """
         self._check_input(features)
@@ -176,7 +185,6 @@ def information_gain(features, attribute_index, targets):
             attribute_index.
     """
 
-    raise NotImplementedError()
 
 if __name__ == '__main__':
     # construct a fake tree
