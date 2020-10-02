@@ -47,7 +47,7 @@ def load_data(data_path):
         attribute_names (list): list of strings containing names of each attribute
             (headers of csv)
     """
-    f = open(data_path, 'rb')
+    f = open(data_path)
     read_file = csv.reader(f)
     attribute_names = read_file[0]
     attribute_num = len(attribute_names)
@@ -58,9 +58,10 @@ def load_data(data_path):
         if i != 0:
             features.append(i)
 
-
     for k in read_file:
         targets.append(int(k[attribute_num - 1])）
+
+    return features, targets, attribute_name
 
 
 
@@ -90,5 +91,22 @@ def train_test_split(features, targets, fraction):
     """
     if (fraction > 1.0):
         raise ValueError('N cannot be bigger than number of examples!')
-
-    raise NotImplementedError()
+    if (fraction == 1.0):
+        return features, targets, features, targets
+    N = int(features.shape[0] * fraction)
+    shuffle = random.choices(range(0, features.shape[0]), features.shape[0])
+    on = true
+    train_features = []
+    test_features = []
+    train_targets = []
+    test_targets = []
+    for i in shuffle :
+        if i > N :
+            on = false
+        if on :
+            train_features.append(features[i])
+            train_targets.append(features[i])
+        else:
+            test_features.append(features[i])
+            test_targets.append(features[i])
+    return train_features, train_targets, test_features, test_targets
