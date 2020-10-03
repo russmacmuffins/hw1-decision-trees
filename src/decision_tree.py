@@ -25,6 +25,39 @@ class Node():
         self.attribute_index = attribute_index
         self.value = value
 
+    def ID3 (self, features, targets):
+        best = None
+        bestVal = 0
+        for j in range(0, len(features[0]) - 1):
+            newBest = information_gain(features, j, targets)
+            if newBest > bestVal:
+                best = j
+                bestVal = newBest
+        self.attribute_name = attribute_names[j]
+        self.attribute_index = j
+        pos = []
+        pos_sub = []
+        neg = []
+        neg_sub = []
+        for k in range(0, len(features)):
+            if k[best]:
+                pos.append(features[k][best])
+                pos_sub.append(features[k])
+            else:
+                neg.append(k[best])
+                neg_sub.append(features[k])
+        if pos and neg:
+            self.branches[0] = Node()
+            self.branches[1] = Node()
+            self.branches[0] = ID3(pos_sub, targets)
+            self.branches[1] = ID3(neg_sub, targets)
+        else if pos:
+            self.value = 1
+        else if neg:
+            self.value = 0
+
+
+
 
 class DecisionTree():
     def __init__(self, attribute_names):
@@ -55,8 +88,8 @@ class DecisionTree():
         """
         self.attribute_names = attribute_names
         self.tree = None
-        attribute_remains = attribute_names
-        if
+
+
 
     def _check_input(self, features):
         if features.shape[1] != len(self.attribute_names):
@@ -77,15 +110,26 @@ class DecisionTree():
             VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
+        if not(target):
+            return
         num = 0
+
         for i in targets:
             if i:
-                num++
+                num += 1
+        if len(targets) == 0:
+            return
+        else if num == 0:
+            self.tree = Node(0)
+            return
+        else if num == len(targets):
+            self.tree = Node(1)
+            return
+        else if not(features):
+            self.tree = Node(round((len(targets) - num)/2))
+            return
+        self.tree = Node().ID3(features, targets)
 
-        if num >= len(targets):
-            self.most_common_class = 1
-        else:
-            self.most_common_class = 0
 
     def predict(self, features):
         """
@@ -100,8 +144,9 @@ class DecisionTree():
             for the input data.
         """
         self._check_input(features)
+        for i in features:
 
-        raise NotImplementedError()
+
 
     def _visualize_helper(self, tree, level):
         """
