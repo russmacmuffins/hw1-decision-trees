@@ -1,9 +1,9 @@
 {
-    "score": 0,
-    "tests_passed": 0,
+    "score": 10,
+    "tests_passed": 2,
     "notes": {
-        "test_load_data": "FAIL",
-        "test_train_test_split": "FAIL",
+        "test_load_data": "PASS",
+        "test_train_test_split": "PASS",
         "test_f1_measure": "FAIL",
         "test_precision_and_recall": "FAIL",
         "test_confusion_matrix": "FAIL",

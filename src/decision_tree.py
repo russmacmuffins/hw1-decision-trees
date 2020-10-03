@@ -51,9 +51,9 @@ class Node():
             self.branches[1] = Node()
             self.branches[0] = ID3(pos_sub, targets)
             self.branches[1] = ID3(neg_sub, targets)
-        else if pos:
+        elif pos:
             self.value = 1
-        else if neg:
+        elif neg:
             self.value = 0
 
 
@@ -119,13 +119,13 @@ class DecisionTree():
                 num += 1
         if len(targets) == 0:
             return
-        else if num == 0:
+        elif num == 0:
             self.tree = Node(0)
             return
-        else if num == len(targets):
+        elif num == len(targets):
             self.tree = Node(1)
             return
-        else if not(features):
+        elif not(features):
             self.tree = Node(round((len(targets) - num)/2))
             return
         self.tree = Node().ID3(features, targets)
@@ -144,7 +144,6 @@ class DecisionTree():
             for the input data.
         """
         self._check_input(features)
-        for i in features:
 
 
 

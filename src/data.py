@@ -51,16 +51,20 @@ def load_data(data_path):
     read_file = csv.reader(f)
     attribute_names = read_file.__next__()
     attribute_num = len(attribute_names)
-    features = np.array()
-    targets = np.array()
+    attribute_names.pop(attribute_num - 1)
+    features = []
+    targets = []
 
     for i in read_file:
-        features.append(i)
+        tar = int(i.pop(attribute_num - 1))
+        newList = []
+        for j in i:
+            newList.append(float(j))
+        features.append(newList)
+        targets.append(tar)
 
-    for k in read_file:
-        targets.append(int(k[attribute_num - 1]))
 
-    return features, targets, attribute_name
+    return np.array(features), np.array(targets), attribute_names
 
 
 
@@ -93,19 +97,22 @@ def train_test_split(features, targets, fraction):
     if (fraction == 1.0):
         return features, targets, features, targets
     N = int(features.shape[0] * fraction)
-    shuffle = random.choices(range(0, features.shape[0]), features.shape[0])
-    on = true
+    np.random.shuffle(features)
+    np.random.shuffle(targets)
+    on = True
     train_features = []
     test_features = []
     train_targets = []
     test_targets = []
-    for i in shuffle :
-        if i > N :
-            on = false
+    for i in range(0, features.shape[0]):
+        if i >= N :
+            on = False
         if on :
-            train_features.append(features[i])
-            train_targets.append(features[i])
+            train_features.append(i)
+            train_targets.append(i)
         else:
-            test_features.append(features[i])
-            test_targets.append(features[i])
-    return train_features, train_targets, test_features, test_targets
+            test_features.append(i)
+            test_targets.append(i)
+
+    return np.array(train_features), np.array(train_targets),
+    np.array(test_features), np.array(test_targets)
