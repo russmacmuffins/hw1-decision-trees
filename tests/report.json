@@ -1,12 +1,12 @@
 {
-    "score": 10,
-    "tests_passed": 2,
+    "score": 15,
+    "tests_passed": 3,
     "notes": {
         "test_load_data": "PASS",
         "test_train_test_split": "PASS",
         "test_f1_measure": "FAIL",
         "test_precision_and_recall": "FAIL",
-        "test_confusion_matrix": "FAIL",
+        "test_confusion_matrix": "PASS",
         "test_experiment_run_decision_tree": "FAIL",
         "test_experiment_run_prior_probability": "FAIL",
         "test_accuracy": "FAIL",
