@@ -42,7 +42,22 @@ def run(data_path, learner_type, fraction):
         f1_measure (np.float): F1 Measure on testing examples using learner
     """
 
-    raise NotImplementedError()
+    features, targets, attribute_names = load_data(data_path)
+    learner = None
+    if learner_type == "decision_tree":
+        learner = DecisionTree(attribute_names)
+    elif learner_type == "prior_probability":
+        learner = PriorProbability()
 
+    trf, trt, tef, tet = train_test_split(features, targets, fraction)
+
+    learner.fit(trf, trt)
+
+    pred = learner.predict(tef)
+
+    conf = confusion_matrix(tet, pred)
+    acc = accuracy(tet, pred)
+    prec, rec = precision_and_recall(tet, pred)
+    f1 = f1_measure(tet, pred)
     # Order of these returns must be maintained
-    return confusion_matrix, accuracy, precision, recall, f1_measure
+    return conf, acc, prec, rec, f1

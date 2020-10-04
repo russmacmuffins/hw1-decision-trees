@@ -1,6 +1,6 @@
 {
-    "score": 29,
-    "tests_passed": 6,
+    "score": 53,
+    "tests_passed": 7,
     "notes": {
         "test_load_data": "PASS",
         "test_train_test_split": "PASS",
@@ -8,7 +8,7 @@
         "test_precision_and_recall": "PASS",
         "test_confusion_matrix": "PASS",
         "test_experiment_run_decision_tree": "FAIL",
-        "test_experiment_run_prior_probability": "FAIL",
+        "test_experiment_run_prior_probability": "PASS",
         "test_accuracy": "PASS",
         "test_experiment_run_and_compare": "FAIL"
     }

@@ -16,7 +16,7 @@
     "test_imports": true,
     "test_decision_tree": false,
     "test_experiment_run_decision_tree": false,
-    "test_experiment_run_prior_probability": false,
+    "test_experiment_run_prior_probability": true,
     "test_accuracy": true,
     "test_experiment_run_and_compare": false,
     "test_netid": true
