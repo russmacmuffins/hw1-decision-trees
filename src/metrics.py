@@ -60,7 +60,11 @@ def accuracy(actual, predictions):
     if predictions.shape[0] != actual.shape[0]:
         raise ValueError("predictions and actual must be the same length!")
 
-    raise NotImplementedError()
+    cm = confusion_matrix(actual, predictions)
+    correct = cm[0][0] + cm[1][1]
+    total = correct + cm[0][1] + cm[1][0]
+
+    return correct/total
 
 def precision_and_recall(actual, predictions):
     """
@@ -81,8 +85,11 @@ def precision_and_recall(actual, predictions):
     """
     if predictions.shape[0] != actual.shape[0]:
         raise ValueError("predictions and actual must be the same length!")
+    cm = confusion_matrix(actual, predictions)
+    prec = cm[1][1]/(cm[1][1] + cm[0][1])
+    rec = cm[1][1]/(cm[1][1] + cm[1][0])
 
-    raise NotImplementedError()
+    return prec, rec
 
 def f1_measure(actual, predictions):
     """
@@ -104,4 +111,5 @@ def f1_measure(actual, predictions):
     if predictions.shape[0] != actual.shape[0]:
         raise ValueError("predictions and actual must be the same length!")
 
-    raise NotImplementedError()
+    p,r = precision_and_recall(actual, predictions)
+    return 2 * ((p*r)/(p+r))
