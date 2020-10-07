@@ -25,36 +25,70 @@ class Node():
         self.attribute_index = attribute_index
         self.value = value
 
-    def ID3 (self, features, targets, names):
+    def ID3 (self, features, targets, names, default):
+        num = 0
+        for i in targets:
+            num += i
+        if len(targets) == 0:
+            self.value = default
+            return self
+        elif num == 0:
+            self = Node(0)
+            return self
+        elif num == len(targets):
+            self = Node(1)
+            return self
+        elif (len(features) == 0):
+            self.tree = Node(round((len(targets) - num)/2))
+            return self
         best = None
         bestVal = 0
-        for j in range(targets.shape[0]-1):
+        for j in range(0, len(features)-1):
             newBest = information_gain(features, j, targets)
             if newBest > bestVal:
                 best = j
                 bestVal = newBest
-        self.attribute_name = names[j]
-        self.attribute_index = j
+        self.attribute_name = names[best]
+        self.attribute_index = best
         pos = []
         pos_sub = []
+        targ_pos = []
         neg = []
         neg_sub = []
-        for k in range(targets.shape[0] - 1):
+        targ_neg = []
+        for k in range(len(features) - 1):
             if features[k][best]:
-                pos.append(features[k][best])
-                pos_sub.append(features[k])
+                pos.append(np.array(features[k][best]))
+                pos_sub.append(np.array(features[k]))
+                targ_pos.append(np.array(targets[k]))
             else:
-                neg.append(features[k][best])
-                neg_sub.append(features[k])
+                neg.append(np.array(features[k][best]))
+                neg_sub.append(np.array(features[k]))
+                targ_neg.append(np.array(targets[k]))
         if pos and neg:
             self.branches.append(Node())
             self.branches.append(Node())
-            self.branches[0].ID3(pos_sub, targets, names)
-            self.branches[1].ID3(neg_sub, targets, names)
+            self.branches[0].ID3(pos_sub, targ_pos, names, Node(round((len(targets) - num)/2)))
+            self.branches[1].ID3(neg_sub, targ_neg, names, Node(round((len(targets) - num)/2)))
+            return self
         elif pos:
             self.value = 1
+            return self
         elif neg:
             self.value = 0
+            return self
+
+    def predict_helper(self, choice):
+        if (len(self.branches) == 0):
+            return self.value
+        else:
+            if choice[self.attribute_index]:
+                self.branches[0].predict_helper(choice)
+            else:
+                self.branches[1].predict_helper(choice)
+
+
+
 
 
 
@@ -110,25 +144,11 @@ class DecisionTree():
             VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
-        if not(targets.any()):
-            return
-        num = 0
 
-        for i in targets:
-            if i:
-                num += 1
-        if len(targets) == 0:
-            return
-        elif num == 0:
-            self.tree = Node(0)
-            return
-        elif num == len(targets):
-            self.tree = Node(1)
-            return
-        elif not(features.any()):
-            self.tree = Node(round((len(targets) - num)/2))
-            return
-        self.tree = Node().ID3(features, targets, self.attribute_names)
+        self.tree = Node().ID3(features, targets, self.attribute_names, 0)
+        print("\n")
+        self.visualize
+        print("\n")
 
 
     def predict(self, features):
@@ -144,6 +164,10 @@ class DecisionTree():
             for the input data.
         """
         self._check_input(features)
+        out = []
+        for i in features:
+            out.append(self.tree.predict_helper(i))
+        return np.array(out)
 
 
 
@@ -257,10 +281,10 @@ def information_gain(features, attribute_index, targets):
             else:
                 p2_splitfalse += 1
 
-    entS =  entropy(p1, p2, p1+p2)
-    entS -= ((p1_truesplit+p2_truesplit)/(p1+p2))*entropy(p1_truesplit, p2_truesplit, p1_truesplit+p2_truesplit)
-    entS -= ((p1_splitfalse+p2_splitfalse)/(p1+p2))*entropy(p1_splitfalse, p2_splitfalse, p1_splitfalse+p2_splitfalse)
-    return entS
+    info_gain =  entropy(p1, p2, p1+p2)
+    info_gain -= ((p1_truesplit+p2_truesplit)/(p1+p2))*entropy(p1_truesplit, p2_truesplit, p1_truesplit+p2_truesplit)
+    info_gain -= ((p1_splitfalse+p2_splitfalse)/(p1+p2))*entropy(p1_splitfalse, p2_splitfalse, p1_splitfalse+p2_splitfalse)
+    return info_gain
 
 def entropy(point1, point2, total):
     return -((point1/total)*(np.log2((point1/total))))-((point2/total)*(np.log2((point2/total))))
