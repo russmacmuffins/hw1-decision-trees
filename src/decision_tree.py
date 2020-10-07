@@ -25,32 +25,32 @@ class Node():
         self.attribute_index = attribute_index
         self.value = value
 
-    def ID3 (self, features, targets):
+    def ID3 (self, features, targets, names):
         best = None
         bestVal = 0
-        for j in range(0, len(features[0]) - 1):
+        for j in range(targets.shape[0]-1):
             newBest = information_gain(features, j, targets)
             if newBest > bestVal:
                 best = j
                 bestVal = newBest
-        self.attribute_name = attribute_names[j]
+        self.attribute_name = names[j]
         self.attribute_index = j
         pos = []
         pos_sub = []
         neg = []
         neg_sub = []
-        for k in range(0, len(features)):
-            if k[best]:
+        for k in range(targets.shape[0] - 1):
+            if features[k][best]:
                 pos.append(features[k][best])
                 pos_sub.append(features[k])
             else:
-                neg.append(k[best])
+                neg.append(features[k][best])
                 neg_sub.append(features[k])
         if pos and neg:
-            self.branches[0] = Node()
-            self.branches[1] = Node()
-            self.branches[0] = ID3(pos_sub, targets)
-            self.branches[1] = ID3(neg_sub, targets)
+            self.branches.append(Node())
+            self.branches.append(Node())
+            self.branches[0].ID3(pos_sub, targets, names)
+            self.branches[1].ID3(neg_sub, targets, names)
         elif pos:
             self.value = 1
         elif neg:
@@ -110,7 +110,7 @@ class DecisionTree():
             VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
-        if not(target):
+        if not(targets.any()):
             return
         num = 0
 
@@ -125,10 +125,10 @@ class DecisionTree():
         elif num == len(targets):
             self.tree = Node(1)
             return
-        elif not(features):
+        elif not(features.any()):
             self.tree = Node(round((len(targets) - num)/2))
             return
-        self.tree = Node().ID3(features, targets)
+        self.tree = Node().ID3(features, targets, self.attribute_names)
 
 
     def predict(self, features):
@@ -227,7 +227,47 @@ def information_gain(features, attribute_index, targets):
     Output:
         information_gain (float): information gain if the features were split on the
             attribute_index.
+
+    1. num of features with attribute = 1-0
+    2. num of test_targets of the feature is represent
+    p1 = count of targets that are 1
+    p2 count tar 0
+    p1_trusplit num of samples classified with a 1 and if that feature is represent
+    p1_plitfalse num of samples classified with a 1 and if that feature is not represent
+    p2_trusplit num of samples classified with a 0 and if that feature is represent
+    p2_plitfalse num of samples classified with a 0 and if that feature is not represent
     """
+    p1 = 0
+    p2 = 0
+    p1_truesplit = 0
+    p1_splitfalse = 0
+    p2_truesplit = 0
+    p2_splitfalse = 0
+    for i in range(len(targets)):
+        if targets[i]:
+            p1 += 1
+            if features[i][attribute_index]:
+                p1_truesplit += 1
+            else:
+                p1_splitfalse += 1
+        else:
+            p2 += 1
+            if features[i][attribute_index]:
+                p2_truesplit += 1
+            else:
+                p2_splitfalse += 1
+
+    entS =  entropy(p1, p2, p1+p2)
+    entS -= ((p1_truesplit+p2_truesplit)/(p1+p2))*entropy(p1_truesplit, p2_truesplit, p1_truesplit+p2_truesplit)
+    entS -= ((p1_splitfalse+p2_splitfalse)/(p1+p2))*entropy(p1_splitfalse, p2_splitfalse, p1_splitfalse+p2_splitfalse)
+    return entS
+
+def entropy(point1, point2, total):
+    return -((point1/total)*(np.log2((point1/total))))-((point2/total)*(np.log2((point2/total))))
+
+
+
+
 
 
 if __name__ == '__main__':
