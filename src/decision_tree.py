@@ -43,11 +43,15 @@ class Node():
             return self
         best = None
         bestVal = 0
-        for j in range(0, len(features)-1):
+        for j in range(0, len(features[0]) - 1):
             newBest = information_gain(features, j, targets)
             if newBest > bestVal:
                 best = j
                 bestVal = newBest
+        print(best, bestVal)
+        if bestVal == 0:
+            self.value = default
+            return self
         self.attribute_name = names[best]
         self.attribute_index = best
         pos = []
@@ -72,10 +76,10 @@ class Node():
             self.branches[1].ID3(neg_sub, targ_neg, names, Node(round((len(targets) - num)/2)))
             return self
         elif pos:
-            self.value = 1
+            self.branches[0].ID3(pos_sub, targ_pos, names, Node(round((len(targets) - num)/2)))
             return self
         elif neg:
-            self.value = 0
+            self.branches[1].ID3(neg_sub, targ_neg, names, Node(round((len(targets) - num)/2)))
             return self
 
     def predict_helper(self, choice):
@@ -145,7 +149,7 @@ class DecisionTree():
         """
         self._check_input(features)
 
-        self.tree = Node().ID3(features, targets, self.attribute_names, 0)
+        self.tree = Node().ID3(features, targets, self.attribute_names, 1)
         print("\n")
         self.visualize
         print("\n")
@@ -267,9 +271,14 @@ def information_gain(features, attribute_index, targets):
     p1_splitfalse = 0
     p2_truesplit = 0
     p2_splitfalse = 0
+    #print("new fxn call")
+    #print(len(targets))
+    #print(len(targets) == len(features))
+    #print(attribute_index)
     for i in range(len(targets)):
         if targets[i]:
             p1 += 1
+            #print(features[i])
             if features[i][attribute_index]:
                 p1_truesplit += 1
             else:
@@ -280,10 +289,12 @@ def information_gain(features, attribute_index, targets):
                 p2_truesplit += 1
             else:
                 p2_splitfalse += 1
-
-    info_gain =  entropy(p1, p2, p1+p2)
-    info_gain -= ((p1_truesplit+p2_truesplit)/(p1+p2))*entropy(p1_truesplit, p2_truesplit, p1_truesplit+p2_truesplit)
-    info_gain -= ((p1_splitfalse+p2_splitfalse)/(p1+p2))*entropy(p1_splitfalse, p2_splitfalse, p1_splitfalse+p2_splitfalse)
+    if ((p1 == 0) and (p2 == 0)) or ((p1_truesplit == 0) and (p2_truesplit == 0)) or ((p1_splitfalse == 0) and (p2_splitfalse == 0)):
+        return 0
+    else:
+        info_gain =  entropy(p1, p2, p1+p2)
+        info_gain -= ((p1_truesplit+p2_truesplit)/(p1+p2))*entropy(p1_truesplit, p2_truesplit, p1_truesplit+p2_truesplit)
+        info_gain -= ((p1_splitfalse+p2_splitfalse)/(p1+p2))*entropy(p1_splitfalse, p2_splitfalse, p1_splitfalse+p2_splitfalse)
     return info_gain
 
 def entropy(point1, point2, total):

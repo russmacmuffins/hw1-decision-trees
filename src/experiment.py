@@ -58,6 +58,6 @@ def run(data_path, learner_type, fraction):
     conf = confusion_matrix(tet, pred)
     acc = accuracy(tet, pred)
     prec, rec = precision_and_recall(tet, pred)
-    f1 = f1_measure(tet, pred)
+    f1= f1_measure(tet, pred)
     # Order of these returns must be maintained
     return conf, acc, prec, rec, f1
