@@ -25,67 +25,71 @@ class Node():
         self.attribute_index = attribute_index
         self.value = value
 
-    def ID3 (self, features, targets, names, default):
+    def ID3 (self, features, targets, names, namedict, default):
         num = 0
         for i in targets:
             num += i
         if len(targets) == 0:
             self.value = default
+            self.attribute_name = "leaf"
             return self
         elif num == 0:
-            self = Node(0)
+            self.value = 0
+            self.attribute_name = "leaf"
             return self
         elif num == len(targets):
-            self = Node(1)
+            self.value = 1
+            self.attribute_name = "leaf"
             return self
-        elif (len(features) == 0):
-            self.tree = Node(round((len(targets) - num)/2))
+        elif (len(features) == 0) or len(features[0]) == 0:
+            self.value = round(num/(len(targets)))
+            self.attribute_name = "leaf"
             return self
+        if not(len(features) == len(targets)) or not(len(names) == len(features[0])):
+            print(len(features[0]) - len(names))
         best = None
         bestVal = 0
-        for j in range(0, len(features[0]) - 1):
+        for j in range(len(features[0])):
             newBest = information_gain(features, j, targets)
-            if newBest > bestVal:
+            if newBest >= bestVal:
                 best = j
                 bestVal = newBest
-        print(best, bestVal)
-        if bestVal == 0:
+        if best is None:
             self.value = default
+            self.attribute_name = "leaf"
             return self
         self.attribute_name = names[best]
-        self.attribute_index = best
-        pos = []
-        pos_sub = []
-        targ_pos = []
-        neg = []
-        neg_sub = []
-        targ_neg = []
-        for k in range(len(features) - 1):
-            if features[k][best]:
-                pos.append(np.array(features[k][best]))
-                pos_sub.append(np.array(features[k]))
-                targ_pos.append(np.array(targets[k]))
-            else:
-                neg.append(np.array(features[k][best]))
-                neg_sub.append(np.array(features[k]))
-                targ_neg.append(np.array(targets[k]))
-        if pos and neg:
+        self.attribute_index = namedict[self.attribute_name]
+        pos_sub, neg_sub, targ_pos, targ_neg, newNames = split(features, targets, names, best)
+        #print(pos_sub, neg_sub)
+        #print(targ_pos, targ_neg)
+        print("new iteration beginning now")
+        if not(len(pos_sub) == 0) and not(len(neg_sub) == 0):
             self.branches.append(Node())
             self.branches.append(Node())
-            self.branches[0].ID3(pos_sub, targ_pos, names, Node(round((len(targets) - num)/2)))
-            self.branches[1].ID3(neg_sub, targ_neg, names, Node(round((len(targets) - num)/2)))
+            print("pos and neg")
+            self.branches[0].ID3(pos_sub, targ_pos, newNames, namedict, 0)
+            self.branches[1].ID3(neg_sub, targ_neg, newNames, namedict, 1)
             return self
-        elif pos:
-            self.branches[0].ID3(pos_sub, targ_pos, names, Node(round((len(targets) - num)/2)))
+        elif not(len(pos_sub) == 0):
+            self.branches.append(Node())
+            self.branches.append(Node(1, "leaf"))
+            print("just pos")
+            self.branches[0].ID3(pos_sub, targ_pos, newNames, namedict, 0)
             return self
-        elif neg:
-            self.branches[1].ID3(neg_sub, targ_neg, names, Node(round((len(targets) - num)/2)))
+        elif not(len(neg_sub) == 0):
+            self.branches.append(Node(0, "leaf"))
+            self.branches.append(Node())
+            print("just neg")
+            self.branches[1].ID3(pos_sub, targ_pos, newNames, namedict, 1)
             return self
 
     def predict_helper(self, choice):
-        if (len(self.branches) == 0):
+        #print(self.value)
+        if self.attribute_name == "leaf":
             return self.value
         else:
+            #print(self.attribute_index)
             if choice[self.attribute_index]:
                 self.branches[0].predict_helper(choice)
             else:
@@ -148,10 +152,12 @@ class DecisionTree():
             VOID: It should update self.tree with a built decision tree.
         """
         self._check_input(features)
-
-        self.tree = Node().ID3(features, targets, self.attribute_names, 1)
+        namedict = {}
+        for i in range(len(self.attribute_names)):
+            namedict[self.attribute_names[i]] = i
+        self.tree = Node().ID3(features, targets, self.attribute_names, namedict, 1)
         print("\n")
-        self.visualize
+        self.visualize()
         print("\n")
 
 
@@ -169,8 +175,13 @@ class DecisionTree():
         """
         self._check_input(features)
         out = []
+        #print("\n")
+        #print(features)
+        #print("\n")
         for i in features:
+            #print(i)
             out.append(self.tree.predict_helper(i))
+            #print("\n")
         return np.array(out)
 
 
@@ -180,7 +191,7 @@ class DecisionTree():
         Helper function for visualize a decision tree at a given level of recursion.
         """
         tab_level = "  " * level
-        val = tree.value if tree.value is not None else 0
+        val = self.tree.value if self.tree.value is not None else -1
         print("%d: %s%s == %f" % (level, tab_level, tree.attribute_name, val))
 
     def visualize(self, branch=None, level=0):
@@ -271,10 +282,6 @@ def information_gain(features, attribute_index, targets):
     p1_splitfalse = 0
     p2_truesplit = 0
     p2_splitfalse = 0
-    #print("new fxn call")
-    #print(len(targets))
-    #print(len(targets) == len(features))
-    #print(attribute_index)
     for i in range(len(targets)):
         if targets[i]:
             p1 += 1
@@ -300,7 +307,35 @@ def information_gain(features, attribute_index, targets):
 def entropy(point1, point2, total):
     return -((point1/total)*(np.log2((point1/total))))-((point2/total)*(np.log2((point2/total))))
 
+def split(features, targets, names, index):
+    all = [[] for i in range(4)]
+    newNames = names.copy()
+    newNames.pop(index)
+    #print(features)
+    for i in range(len(features)):
+        if features[i][index] == 1:
+            all[0].append(features[i])
+            all[1].append(targets[i])
+        else:
+            all[2].append(features[i])
+            all[3].append(targets[i])
 
+    for j in range(len(all[0])):
+        #print()
+        #print(len(all[0][j]))
+        a = np.delete(all[0][j], index)
+        all[0][j] = a
+        #print(len(all[0][j]))
+    for k in range(len(all[2])):
+        #print()
+        #print(len(all[2][k]))
+        b = np.delete(all[2][k], index)
+        all[2][k] = b
+        #print(len(all[2][k]))
+
+    #print((len(all[0][0])) - len(names))
+
+    return np.array(all[0]), np.array(all[2]), np.array(all[1]),  np.array(all[3]),  newNames
 
 
 
